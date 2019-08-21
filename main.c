@@ -13,7 +13,7 @@ int main () {
 
   String in;
   while (1) {
-    in = inputColored(L"(QUARTZ): ", 0xff5555, 0xffffff);
+    in = inputColored(L"[quartz]: ", 0xff5555, 0xffffff);
     if (streql(in, L"banana")) {
       print(L"BANANAAA!!\n");
     }
