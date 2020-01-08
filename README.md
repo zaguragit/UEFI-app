@@ -1,12 +1,11 @@
 # quartz
 
-Quartz is a UEFI app that is supposed to eventually become an OS.
+this is a UEFI app that exits boot services and paints individual pixels on the screen
 
 
 Build requirements:
  - gcc
  - gnu-efi
- - Linux
 
 Install requirements:
  - UEFI pc/motherboard
