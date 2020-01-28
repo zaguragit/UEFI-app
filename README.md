@@ -1,7 +1,4 @@
-# quartz
-
 this is a UEFI app that exits boot services and paints individual pixels on the screen
-
 
 Build requirements:
  - gcc
