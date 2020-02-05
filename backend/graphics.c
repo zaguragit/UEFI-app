@@ -16,7 +16,7 @@ struct graphicsInfo {
 } graphicsInfo;
 
 EFI_STATUS
-select_mode(EFI_GRAPHICS_OUTPUT_PROTOCOL *graphics, OUT UINT32 *mode) {
+select_mode(EFI_GRAPHICS_OUTPUT_PROTOCOL *graphics, OUT u32 *mode) {
   *mode = graphics->Mode->Mode;
   EFI_GRAPHICS_OUTPUT_MODE_INFORMATION most_appropriate_info;
   EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *info;
@@ -53,7 +53,7 @@ select_mode(EFI_GRAPHICS_OUTPUT_PROTOCOL *graphics, OUT UINT32 *mode) {
 
 EFI_STATUS
 initGraphics(EFI_GRAPHICS_OUTPUT_PROTOCOL *graphics) {
-  UINT32 new_mode;
+  u32 new_mode;
   EFI_STATUS status = select_mode(graphics, &new_mode);
   ASSERT_EFI_STATUS(status, L"init_graphics select_mode");
   status = uefi_call_wrapper(graphics->SetMode, 2, graphics, new_mode);
@@ -64,20 +64,20 @@ initGraphics(EFI_GRAPHICS_OUTPUT_PROTOCOL *graphics) {
   return EFI_SUCCESS;
 }
 
-void setPixel(int x, int y, UINT32 color) {
+void setPixel(u32 x, u32 y, u32 color) {
   x *= 4;
   y *= 4;
-  int32_t *addr = graphicsInfo.bufferBase + x + y * graphicsInfo.outputMode.PixelsPerScanLine;
+  i32 *addr = graphicsInfo.bufferBase + x + y * graphicsInfo.outputMode.PixelsPerScanLine;
   *addr = color | 0xff000000;
 }
 
-void drawRect(int fromX, int fromY, int toX, int toY, UINT32 color) {
+void drawRect(u32 fromX, u32 fromY, u32 toX, u32 toY, u32 color) {
   for (int xx = fromX; xx < toX; xx++)
     for (int yy = fromY; yy < toY; yy++)
       setPixel(xx, yy, color);
 }
 
-void drawChar(CHAR16 ch, int x, int y, UINT32 color) {
+void drawChar(CHAR16 ch, int x, int y, u32 color) {
   FontGlyph g = getFontGlyph(ch);
   for (int yy = 0; yy < 7; yy++) {
     int line = g[yy];
@@ -93,7 +93,7 @@ void drawChar(CHAR16 ch, int x, int y, UINT32 color) {
   }
 }
 
-void drawString(String str, int x, int y, UINT32 color) {
+void drawString(String str, u32 x, u32 y, u32 color) {
   int xx = 0, yy = 4, i = 0;
   while(str[i]) {
     if (str[i] == 0x000A) {
@@ -107,9 +107,9 @@ void drawString(String str, int x, int y, UINT32 color) {
   }
 }
 
-void drawCenteredString(String str, int x, int y, UINT32 color) {
+void drawCenteredString(String str, u32 x, u32 y, u32 color) {
   x -= length(str) * 8;
-  int xx = 0, yy = -7, i = 0;
+  u32 xx = 0, yy = -7, i = 0;
   while(str[i]) {
     // if (str[i] == 0x000A) {
     //   yy += 8;

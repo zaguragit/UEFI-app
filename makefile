@@ -14,7 +14,7 @@ ifeq ($(ARCH),x86_64)
   CFLAGS += -DEFI_FUNCTION_WRAPPER
 endif
 
-LDFLAGS         = -nostdlib -znocombreloc -T $(EFI_LDS) -shared \
+LDFLAGS = -nostdlib -znocombreloc -T $(EFI_LDS) -shared \
 									-Bsymbolic -L $(EFILIB) -L $(LIB) $(EFI_CRT_OBJS)
 
 all: $(TARGET)
@@ -33,4 +33,4 @@ install:
 	sudo cp quartz.efi /boot/efi/EFI
 
 qemu: all
-	uefi-run -b /usr/share/ovmf/x64/OVMF_CODE.fd -q qemu-system-x86_64 $(TARGET)
+	./build/uefi-run -b ./build/OVMF_CODE.fd -q qemu-system-x86_64 $(TARGET)

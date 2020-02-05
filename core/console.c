@@ -14,7 +14,7 @@ void printColorch(CHAR16 ch, INT32 color) {
 }
 void printch(CHAR16 ch) { printColorch(ch, 0xffffff); }
 
-void printColored(String str, INT32 color) {
+void printColored(String str, u32 color) {
   int i = 0;
   while(str[i]) {
     printColorch(str[i], color);
@@ -25,7 +25,7 @@ void print(String str) { printColored(str, 0xffffff); }
 
 
 String buffstr;
-String inputColored(String str, INT32 printC, INT32 inputC) {
+String inputColored(String str, u32 printC, u32 inputC) {
   printColored(str, printC);
 	int i = 0;
   buffstr = L"";

@@ -1,6 +1,6 @@
 #include "backend/setup.c"
 
-const int dockWidth = 64;
+#define dockWidth 64
 
 #include "core/console.c"
 
@@ -12,7 +12,7 @@ int main () {
   drawRect(0, 0, dockWidth, graphicsInfo.outputMode.VerticalResolution, 0x111213);
 
   String in;
-  while (1) {
+  loop() {
     in = inputColored(L"[quartz]: ", 0xff5555, 0xffffff);
     if (streql(in, L"banana")) {
       print(L"BANANAAA!!\n");
