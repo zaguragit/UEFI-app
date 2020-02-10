@@ -1,6 +1,3 @@
-
-//#define GRAPHICS_MOST_APPROPRIATE_H 1080
-//#define GRAPHICS_MOST_APPROPRIATE_W 1920
 #include "font.c"
 
 #define GRAPHICS_MOST_APPROPRIATE_H 720
@@ -9,10 +6,10 @@
 #define ASSERT_EFI_STATUS(x, n) {if(EFI_ERROR((x))) { Print(n": %r\n", x); return x; }}
 
 struct graphicsInfo {
-  EFI_GRAPHICS_OUTPUT_PROTOCOL         *protocol;
-  EFI_GRAPHICS_OUTPUT_MODE_INFORMATION  outputMode;
-  void*                                 bufferBase;
-  UINT8                                 bufferSize;
+	EFI_GRAPHICS_OUTPUT_PROTOCOL         *protocol;
+	EFI_GRAPHICS_OUTPUT_MODE_INFORMATION  outputMode;
+	void*                                 bufferBase;
+	UINT8                                 bufferSize;
 } graphicsInfo;
 
 EFI_STATUS
@@ -53,28 +50,31 @@ select_mode(EFI_GRAPHICS_OUTPUT_PROTOCOL *graphics, OUT u32 *mode) {
 
 EFI_STATUS
 initGraphics(EFI_GRAPHICS_OUTPUT_PROTOCOL *graphics) {
-  u32 new_mode;
-  EFI_STATUS status = select_mode(graphics, &new_mode);
-  ASSERT_EFI_STATUS(status, L"init_graphics select_mode");
-  status = uefi_call_wrapper(graphics->SetMode, 2, graphics, new_mode);
-  ASSERT_EFI_STATUS(status, L"init_graphics SetMode");
-  graphicsInfo.protocol = graphics;
-  graphicsInfo.bufferBase = (void*)graphics->Mode->FrameBufferBase;
-  graphicsInfo.bufferSize = graphics->Mode->FrameBufferSize;
-  return EFI_SUCCESS;
+	u32 new_mode;
+	EFI_STATUS status = select_mode(graphics, &new_mode);
+	ASSERT_EFI_STATUS(status, L"init_graphics select_mode");
+	status = uefi_call_wrapper(graphics->SetMode, 2, graphics, new_mode);
+	ASSERT_EFI_STATUS(status, L"init_graphics SetMode");
+	graphicsInfo.protocol = graphics;
+	graphicsInfo.bufferBase = (void*)graphics->Mode->FrameBufferBase;
+	graphicsInfo.bufferSize = graphics->Mode->FrameBufferSize;
+	return EFI_SUCCESS;
 }
 
 void setPixel(u32 x, u32 y, u32 color) {
-  x *= 4;
-  y *= 4;
-  i32 *addr = graphicsInfo.bufferBase + x + y * graphicsInfo.outputMode.PixelsPerScanLine;
-  *addr = color | 0xff000000;
+	x = x << 2;
+	y = y << 2;
+	i32 *addr = graphicsInfo.bufferBase + x + y * graphicsInfo.outputMode.PixelsPerScanLine;
+	*addr = color | 0xff000000;
 }
 
-void drawRect(u32 fromX, u32 fromY, u32 toX, u32 toY, u32 color) {
-  for (int xx = fromX; xx < toX; xx++)
-    for (int yy = fromY; yy < toY; yy++)
-      setPixel(xx, yy, color);
+void drawRect(i32 fromX, i32 fromY, u32 toX, u32 toY, u32 color) {
+	u32 truColor = color | 0xff000000;
+	for (i32 y = fromY << 2; y < toY << 2; y += 4) {
+		int xx = fromX << 2;
+		i32 *addr = graphicsInfo.bufferBase + xx + y * graphicsInfo.outputMode.PixelsPerScanLine;
+    	for (i32 x = xx; x < toX << 2; x += 4) *addr++ = truColor;
+	}
 }
 
 void drawChar(CHAR16 ch, int x, int y, u32 color) {
