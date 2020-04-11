@@ -1,3 +1,5 @@
+![license](https://img.shields.io/github/license/leoxshn/UEFI-app)
+
 this is a UEFI app that exits boot services and paints individual pixels on the screen
 
 Build requirements:
